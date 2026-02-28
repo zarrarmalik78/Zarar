@@ -10,6 +10,14 @@ export const PortfolioHero: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [, setLoadedFrames] = useState(0);
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -21,9 +29,14 @@ export const PortfolioHero: React.FC = () => {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0]);
   const heroY = useTransform(scrollYProgress, [0, 0.12], [0, -30]);
 
-  // ========== Canvas: starts on right, moves to center ==========
-  const canvasX = useTransform(scrollYProgress, [0, 0.15], ["25%", "0%"]);
-  const canvasScale = useTransform(scrollYProgress, [0, 0.15], [0.45, 1]);
+  // ========== Canvas: starts on right (or bottom on mobile), moves to center ==========
+  const xStart = isMobile ? "0%" : "25%";
+  const yStart = isMobile ? "20%" : "0%";
+  const scaleStart = isMobile ? 0.35 : 0.45;
+
+  const canvasX = useTransform(scrollYProgress, [0, 0.15], [xStart, "0%"]);
+  const canvasY = useTransform(scrollYProgress, [0, 0.15], [yStart, "0%"]);
+  const canvasScale = useTransform(scrollYProgress, [0, 0.15], [scaleStart, 1]);
   const canvasOpacity = useTransform(scrollYProgress, [0, 0.01, 0.92, 1], [1, 1, 1, 0]);
 
   // ========== PHASE 2: Scrollytelling Text (after hero fades) ==========
@@ -95,7 +108,8 @@ export const PortfolioHero: React.FC = () => {
     }
     if (!img) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    // Cap DPR at 2 for significant mobile performance boost
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const w = canvas.offsetWidth;
     const h = canvas.offsetHeight;
 
@@ -172,9 +186,9 @@ export const PortfolioHero: React.FC = () => {
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-indigo-500/30 via-purple-500/20 to-cyan-400/30 blur-[120px]"
         />
 
-        {/* Canvas — slides from right to center */}
+        {/* Canvas — slides from right/bottom to center */}
         <motion.div
-          style={{ x: canvasX, scale: canvasScale }}
+          style={{ x: canvasX, y: canvasY, scale: canvasScale }}
           className="absolute inset-0 flex items-center justify-center"
         >
           <canvas
@@ -188,43 +202,43 @@ export const PortfolioHero: React.FC = () => {
         </motion.div>
 
         {/* ===== SCROLLYTELLING TEXT (appears AFTER hero fades) ===== */}
-        <div className="absolute inset-0 max-w-7xl mx-auto w-full h-full pointer-events-none p-6 sm:p-12 lg:p-20">
+        <div className="absolute inset-0 max-w-7xl mx-auto w-full h-full pointer-events-none p-6 sm:p-12 lg:p-20 overflow-hidden">
 
           {/* Section 1: 15% - 30% (Bottom Left) */}
-          <motion.div style={{ opacity: s1Opacity, y: s1Y }} className="absolute bottom-16 sm:bottom-24 left-6 sm:left-12 lg:left-20 max-w-lg">
-            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
+          <motion.div style={{ opacity: s1Opacity, y: s1Y }} className="absolute bottom-16 sm:bottom-24 left-6 sm:left-12 lg:left-20 max-w-[85%] sm:max-w-lg">
+            <h2 className="text-3xl sm:text-5xl lg:text-7xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight">
               Zarar Malik.
             </h2>
-            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 mt-4 font-medium">
+            <p className="text-base sm:text-xl text-slate-600 dark:text-slate-400 mt-2 sm:mt-4 font-medium">
               Full Stack Engineer & Digital Growth Specialist.
             </p>
           </motion.div>
 
           {/* Section 2: 40% - 55% (Top Right) */}
-          <motion.div style={{ opacity: s2Opacity, y: s2Y }} className="absolute top-24 sm:top-32 right-6 sm:right-12 lg:right-20 max-w-lg text-right">
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-3">
+          <motion.div style={{ opacity: s2Opacity, y: s2Y }} className="absolute top-24 sm:top-32 right-6 sm:right-12 lg:right-20 max-w-[85%] sm:max-w-lg text-right">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-2 sm:mb-3">
               <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-teal-400 bg-clip-text text-transparent">
                 Frontend Precision.
               </span>
             </h2>
-            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 font-medium">
+            <p className="text-base sm:text-xl text-slate-600 dark:text-slate-400 font-medium">
               Pixel-perfect React & Next.js interfaces.
             </p>
           </motion.div>
 
           {/* Section 3: 60% - 75% (Middle Left) */}
-          <motion.div style={{ opacity: s3Opacity, y: s3Y }} className="absolute top-1/2 -translate-y-1/2 left-6 sm:left-12 lg:left-20 max-w-lg">
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-3 text-slate-900 dark:text-white">
+          <motion.div style={{ opacity: s3Opacity, y: s3Y }} className="absolute top-1/2 -translate-y-1/2 left-6 sm:left-12 lg:left-20 max-w-[85%] sm:max-w-lg">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-2 sm:mb-3 text-slate-900 dark:text-white">
               Backend Power.
             </h2>
-            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 font-medium">
+            <p className="text-base sm:text-xl text-slate-600 dark:text-slate-400 font-medium">
               Scalable Node.js & secure databases.
             </p>
           </motion.div>
 
           {/* Section 4: 80% - 100% (Bottom Center) */}
-          <motion.div style={{ opacity: s4Opacity, y: s4Y }} className="absolute bottom-16 sm:bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center text-center w-full px-4">
-            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6">
+          <motion.div style={{ opacity: s4Opacity, y: s4Y }} className="absolute bottom-16 sm:bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center text-center w-full px-6">
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-4 sm:mb-6 leading-tight">
               <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-teal-400 bg-clip-text text-transparent">
                 Ready to Scale.
               </span>
@@ -282,11 +296,10 @@ export const PortfolioHero: React.FC = () => {
                     }}
                     className={index >= 5 ? "text-transparent bg-clip-text bg-gradient-to-br from-indigo-500 via-purple-500 to-teal-400 relative group cursor-default" : "relative group cursor-default"}
                   >
-                    <span className="group-hover:hidden">{word}</span>
-                    <span className="hidden group-hover:inline-block absolute inset-0">
+                    <span className="inline-block group-hover:opacity-0 transition-opacity duration-300">{word}</span>
+                    <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                       <HackerText text={word} />
                     </span>
-                    <span className="md:hidden">{word}</span>
                   </motion.span>
                 ))}
               </motion.h1>
