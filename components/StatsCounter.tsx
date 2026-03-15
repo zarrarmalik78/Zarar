@@ -1,120 +1,143 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Code, Coffee, GitCommit, Users } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Code2, Zap, GitCommit, Users2 } from 'lucide-react';
 
 const stats = [
   {
     id: 1,
-    label: "Projects Delivered",
+    title: "Projects Delivered",
     value: 45,
     suffix: "+",
-    icon: Code,
-    color: "from-indigo-500 to-blue-500",
-    shadow: "shadow-indigo-500/20"
+    icon: Code2,
+    gradient: "from-blue-500 to-indigo-500",
+    shadow: "shadow-indigo-500/50",
+    delay: 0.1,
   },
   {
     id: 2,
-    label: "Hours of Automation Saved",
-    value: 1200,
+    title: "Production Apps",
+    value: 15,
     suffix: "+",
-    icon: Coffee,
-    color: "from-amber-500 to-orange-500",
-    shadow: "shadow-amber-500/20"
+    icon: Zap,
+    gradient: "from-amber-400 to-orange-500",
+    shadow: "shadow-orange-500/50",
+    delay: 0.2,
   },
   {
     id: 3,
-    label: "GitHub Commits (2024)",
-    value: 850,
-    suffix: "",
+    title: "Experience Years",
+    value: 4,
+    suffix: "+",
     icon: GitCommit,
-    color: "from-emerald-500 to-green-500",
-    shadow: "shadow-emerald-500/20"
+    gradient: "from-emerald-400 to-teal-500",
+    shadow: "shadow-emerald-500/50",
+    delay: 0.3,
   },
   {
     id: 4,
-    label: "Happy Clients",
-    value: 30,
+    title: "Happy Clients",
+    value: 50,
     suffix: "+",
-    icon: Users,
-    color: "from-purple-500 to-pink-500",
-    shadow: "shadow-purple-500/20"
+    icon: Users2,
+    gradient: "from-fuchsia-500 to-pink-500",
+    shadow: "shadow-pink-500/50",
+    delay: 0.4,
   }
 ];
 
-export const StatsCounter: React.FC = () => {
-  return (
-    <section className="py-20 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-slate-50 dark:bg-[#030014] -z-20"></div>
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] -z-10"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] -z-10"></div>
+const Counter = ({ from, to, duration, inView }: { from: number; to: number; duration: number, inView: boolean }) => {
+  const [count, setCount] = useState(from);
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
-              whileHover={{ y: -5 }}
-              className="relative group"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl blur-xl -z-10"
-                   style={{ backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))` }}
-              >
-                <div className={`w-full h-full bg-gradient-to-r ${stat.color}`}></div>
-              </div>
-              
-              <div className="relative h-full bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 p-8 rounded-2xl overflow-hidden hover:border-transparent transition-colors duration-300">
-                <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 duration-500`}></div>
-                
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-6 text-white shadow-lg ${stat.shadow} group-hover:scale-110 transition-transform duration-300`}>
-                  <stat.icon size={24} />
-                </div>
-                
-                <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">
-                  <Counter from={0} to={stat.value} duration={2} />
-                  <span className={`text-transparent bg-clip-text bg-gradient-to-br ${stat.color}`}>
-                    {stat.suffix}
-                  </span>
-                </div>
-                
-                <div className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
-                  {stat.label}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Counter = ({ from, to, duration }: { from: number; to: number; duration: number }) => {
-  const [count, setCount] = React.useState(from);
-  const nodeRef = React.useRef<HTMLSpanElement>(null);
-
-  React.useEffect(() => {
-    const node = nodeRef.current;
-    if (!node) return;
-
+  useEffect(() => {
+    if (!inView) return;
     let startTimestamp: number | null = null;
+    let animationFrameId: number;
+
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / (duration * 1000), 1);
-      
-      setCount(Math.floor(progress * (to - from) + from));
-      
+
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.floor(easeOutQuart * (to - from) + from));
+
       if (progress < 1) {
-        window.requestAnimationFrame(step);
+        animationFrameId = window.requestAnimationFrame(step);
       }
     };
-    
-    window.requestAnimationFrame(step);
-  }, [from, to, duration]);
 
-  return <span ref={nodeRef}>{count}</span>;
+    animationFrameId = window.requestAnimationFrame(step);
+    return () => window.cancelAnimationFrame(animationFrameId);
+  }, [from, to, duration, inView]);
+
+  return <span>{count.toLocaleString()}</span>;
+};
+
+export const StatsCounter: React.FC = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  return (
+    <section className="py-12 relative z-10 w-full flex justify-center px-4 sm:px-6">
+      {/* Background ambient glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-32 bg-indigo-500/10 dark:bg-indigo-500/5 blur-[100px] -z-10 pointer-events-none rounded-full"></div>
+
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, scale: 0.95, y: 40 }}
+        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
+        className="relative w-full max-w-6xl rounded-3xl sm:rounded-[40px] p-[1px] group overflow-hidden"
+      >
+        {/* Animated border line sweeping across */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div className="absolute inset-0 bg-slate-200/50 dark:bg-white/5 rounded-3xl sm:rounded-[40px]"></div>
+
+        {/* Inner Glass Container */}
+        <div className="relative bg-white/80 dark:bg-[#0a0a0a]/80 backdrop-blur-2xl rounded-3xl sm:rounded-[40px] p-6 sm:p-10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 border border-slate-100 dark:border-white/10">
+
+          {stats.map((stat, idx) => (
+            <React.Fragment key={stat.id}>
+              <div className="flex flex-col items-center justify-center flex-1 text-center group/stat relative px-2">
+
+                {/* Floating Icon */}
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+                  transition={{ delay: stat.delay + 0.2, type: "spring" }}
+                  className={`w-12 h-12 sm:w-14 sm:h-14 mb-4 rounded-2xl flex items-center justify-center bg-gradient-to-br ${stat.gradient} text-white shadow-lg ${stat.shadow} group-hover/stat:scale-110 group-hover/stat:-translate-y-2 transition-all duration-300`}
+                >
+                  <stat.icon size={24} strokeWidth={2.5} />
+                </motion.div>
+
+                {/* Big Number */}
+                <div className="flex items-baseline justify-center gap-1 mb-1">
+                  <span className={`text-4xl sm:text-5xl font-black bg-clip-text text-transparent bg-gradient-to-r ${stat.gradient}`}>
+                    <Counter from={0} to={stat.value} duration={2.5} inView={isInView} />
+                  </span>
+                  <span className={`text-3xl sm:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r ${stat.gradient}`}>
+                    {stat.suffix}
+                  </span>
+                </div>
+
+                {/* Label */}
+                <div className="text-sm sm:text-base font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1 group-hover/stat:text-slate-800 dark:group-hover/stat:text-white transition-colors duration-300">
+                  {stat.title}
+                </div>
+              </div>
+
+              {/* Minimal vertical dividers between stats (hidden on mobile) */}
+              {idx !== stats.length - 1 && (
+                <div className="hidden md:block w-px h-24 bg-gradient-to-b from-transparent via-slate-200 dark:via-white/10 to-transparent"></div>
+              )}
+              {/* Horizontal divider on mobile */}
+              {idx !== stats.length - 1 && (
+                <div className="block md:hidden h-px w-3/4 bg-gradient-to-r from-transparent via-slate-200 dark:via-white/10 to-transparent my-2"></div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </motion.div>
+    </section>
+  );
 };

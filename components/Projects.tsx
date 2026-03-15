@@ -4,20 +4,17 @@ import { PROJECTS } from '../constants.tsx';
 import { ProjectCard } from './ProjectCard.tsx';
 import { ArrowRight, Code2 } from 'lucide-react';
 
-const TABS = ["All", "Frontend", "Full Stack", "Automation", "Business"];
+const TABS = ["Tab 1", "Tab 2", "Tab 3"];
 
 export const Projects: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("All");
+  const [activeTab, setActiveTab] = useState("Tab 1");
 
-  const filteredProjects = PROJECTS.filter(project => {
-    if (activeTab === "All") return true;
-    // Map tabs to potential tags or logic
-    if (activeTab === "Frontend") return project.tags.some(tag => ["UX Design", "Visual Portfolio", "Retail", "Game Dev", "Interactive", "Web", "Storytelling", "Mobile App", "React"].includes(tag));
-    if (activeTab === "Full Stack") return project.tags.some(tag => ["Real Estate", "Booking System", "Technology", "SaaS", "EdTech", "CRM", "HealthTech", "Desktop"].includes(tag));
-    if (activeTab === "Automation") return project.tags.some(tag => ["Automation", "Lead Gen", "AI", "Data Science", "Analytics", "Visualization", "Multimodal", "Gamification"].includes(tag));
-    if (activeTab === "Business") return project.tags.some(tag => ["Business Growth", "Conversion", "SEO", "Inventory", "SaaS", "CRM"].includes(tag));
-    return true;
-  });
+  // Determine which page of projects to show
+  const tabIndex = TABS.indexOf(activeTab);
+  const itemsPerPage = 6;
+  
+  // Slice exactly 6 projects for the active tab page
+  const filteredProjects = PROJECTS.slice(tabIndex * itemsPerPage, (tabIndex + 1) * itemsPerPage);
 
   return (
     <section id="projects" className="py-24 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">

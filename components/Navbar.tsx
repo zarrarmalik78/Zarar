@@ -30,19 +30,17 @@ export const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleTheme }) => {
   }, [location.pathname]);
 
   return (
-    <motion.nav 
+    <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed z-50 transition-all duration-300 w-full flex justify-center ${
-        scrolled ? 'top-4' : 'top-0'
-      }`}
+      className={`fixed z-50 transition-all duration-300 w-full flex justify-center ${scrolled ? 'top-4' : 'top-0'
+        }`}
     >
-      <div 
-        className={`${
-          scrolled 
-            ? 'w-[95%] md:w-[85%] max-w-5xl rounded-full bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-indigo-500/5' 
+      <div
+        className={`${scrolled
+            ? 'w-[95%] md:w-[85%] max-w-5xl rounded-full bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-indigo-500/5'
             : 'w-full bg-transparent border-transparent'
-        } transition-all duration-500 px-6 py-4`}
+          } transition-all duration-500 px-6 py-4`}
       >
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -58,15 +56,14 @@ export const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleTheme }) => {
               <Link
                 key={link.name}
                 to={link.name === 'Contact' && location.pathname === '/services' ? '#contact' : link.href}
-                className={`text-sm font-medium transition-colors relative group ${
-                  location.pathname === link.href ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300'
-                }`}
+                className={`text-sm font-medium transition-colors relative group ${location.pathname === link.href ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-300'
+                  }`}
               >
                 {link.name}
                 <span className={`absolute -bottom-1 left-1/2 w-0 h-0.5 bg-indigo-600 dark:bg-indigo-400 transition-all group-hover:w-full group-hover:left-0 duration-300 ${location.pathname === link.href ? 'w-full left-0' : ''}`}></span>
               </Link>
             ))}
-            
+
             <div className="flex items-center gap-4 pl-4 border-l border-slate-200 dark:border-slate-700">
               <button
                 onClick={toggleTheme}
@@ -87,23 +84,23 @@ export const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleTheme }) => {
                 </span>
               </Link>
 
-              <Link 
+              <Link
                 to={location.pathname === '/services' ? '#contact' : '/contact'}
                 className="px-5 py-2 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-bold hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] transition-shadow duration-300"
               >
-                Hire Me
+                Let's Talk
               </Link>
             </div>
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-4">
-             <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-600 dark:text-slate-300"
-              >
-                {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-              </button>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-600 dark:text-slate-300"
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-slate-600 dark:text-slate-300 hover:text-indigo-600 focus:outline-none"
@@ -132,11 +129,11 @@ export const Navbar: React.FC<NavbarProps> = ({ darkMode, toggleTheme }) => {
                     {link.name}
                   </Link>
                 ))}
-                <Link 
+                <Link
                   to={location.pathname === '/services' ? '#contact' : '/contact'}
                   className="block w-full text-center py-3 bg-indigo-600 text-white font-bold rounded-xl mt-4 shadow-lg shadow-indigo-500/30"
                 >
-                  Hire Me
+                  Let's Talk
                 </Link>
               </div>
             </motion.div>
