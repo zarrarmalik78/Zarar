@@ -1,5 +1,5 @@
 import React from 'react';
-import { Hero } from '../components/Hero.tsx';
+import { PortfolioHero } from '../components/PortfolioHero.tsx';
 import { PainPoints } from '../components/PainPoints.tsx';
 import { CompetitiveEdge } from '../components/CompetitiveEdge.tsx';
 import { Projects } from '../components/Projects.tsx';
@@ -10,7 +10,7 @@ import { Contact } from '../components/Contact.tsx';
 export const ServicesPage: React.FC = () => {
   return (
     <>
-      <Hero />
+      <PortfolioHero />
       <PainPoints />
       <Projects />
       <CompetitiveEdge />

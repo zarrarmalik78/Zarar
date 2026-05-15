@@ -22,7 +22,7 @@ export const AboutPage: React.FC = () => {
               
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-900">
                 <img 
-                  src="/workspace.png" 
+                  src="/workspace.webp" 
                   alt="Workspace" 
                   className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
                 />

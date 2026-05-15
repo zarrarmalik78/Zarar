@@ -10,6 +10,7 @@ import { ProjectsPage } from './pages/ProjectsPage';
 import { BusinessContactPage } from './pages/BusinessContactPage';
 import { ContactPage } from './pages/ContactPage';
 import { ServicesPage } from './pages/ServicesPage';
+import { AssignmentPage } from './pages/AssignmentPage';
 import { MessageSquare } from 'lucide-react';
 
 export default function App() {
@@ -74,6 +75,7 @@ export default function App() {
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/business-contact" element={<BusinessContactPage />} />
+            <Route path="/pt1" element={<AssignmentPage />} />
           </Routes>
         </main>
 
